@@ -177,9 +177,7 @@ public class MappingManagerImpl implements MappingManager {
                                 values.addAll(alreadyAdded.getValue());
                             }
 
-                            if (preparedAttr.getRight().getValue() != null) {
-                                values.addAll(preparedAttr.getRight().getValue());
-                            }
+                            values.addAll(preparedAttr.getRight().getValue());
 
                             attributes.add(AttributeBuilder.build(preparedAttr.getRight().getName(), values));
                         }
@@ -190,18 +188,18 @@ public class MappingManagerImpl implements MappingManager {
             }
         }
 
-        Optional<MappingItem> connObjectKeyItem = MappingUtils.getConnObjectKeyItem(provision);
-        if (connObjectKeyItem.isPresent()) {
-            Attribute connObjectKeyExtAttr = AttributeUtil.find(connObjectKeyItem.get().getExtAttrName(), attributes);
-            if (connObjectKeyExtAttr != null) {
-                attributes.remove(connObjectKeyExtAttr);
-                attributes.add(AttributeBuilder.build(connObjectKeyItem.get().getExtAttrName(), connObjectKey));
-            }
-            Name name = MappingUtils.evaluateNAME(any, provision, connObjectKey);
-            attributes.add(name);
-            if (connObjectKey != null && !connObjectKey.equals(name.getNameValue()) && connObjectKeyExtAttr == null) {
-                attributes.add(AttributeBuilder.build(connObjectKeyItem.get().getExtAttrName(), connObjectKey));
-            }
+        Attribute connObjectKeyExtAttr =
+                AttributeUtil.find(MappingUtils.getConnObjectKeyItem(provision).get().getExtAttrName(), attributes);
+        if (connObjectKeyExtAttr != null) {
+            attributes.remove(connObjectKeyExtAttr);
+            attributes.add(AttributeBuilder.build(
+                    MappingUtils.getConnObjectKeyItem(provision).get().getExtAttrName(), connObjectKey));
+        }
+        Name name = MappingUtils.evaluateNAME(any, provision, connObjectKey);
+        attributes.add(name);
+        if (connObjectKey != null && !connObjectKey.equals(name.getNameValue()) && connObjectKeyExtAttr == null) {
+            attributes.add(AttributeBuilder.build(
+                    MappingUtils.getConnObjectKeyItem(provision).get().getExtAttrName(), connObjectKey));
         }
 
         if (enable != null) {
@@ -361,7 +359,7 @@ public class MappingManagerImpl implements MappingManager {
                         }
                     } else if (provision.getResource().isRandomPwdIfNotProvided()) {
                         try {
-                            passwordAttrValue = passwordGenerator.generate(provision.getResource());
+                            passwordAttrValue = passwordGenerator.generate(user);
                         } catch (InvalidPasswordRuleConf e) {
                             LOG.error("Could not generate policy-compliant random password for {}", user, e);
                         }
@@ -405,7 +403,7 @@ public class MappingManagerImpl implements MappingManager {
 
             if (intAttrName.getEnclosingGroup() != null) {
                 Group group = groupDAO.findByName(intAttrName.getEnclosingGroup());
-                if (group == null || !groupableRelatable.getMembership(group.getKey()).isPresent()) {
+                if (group == null || groupableRelatable.getMembership(group.getKey()) == null) {
                     LOG.warn("No membership for {} in {}, ignoring",
                             intAttrName.getEnclosingGroup(), groupableRelatable);
                 } else {

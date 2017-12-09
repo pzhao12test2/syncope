@@ -125,7 +125,7 @@ public abstract class AnyDirectoryPanel<A extends AnyTO, E extends AbstractAnyRe
 
         initResultTable();
 
-        // change close callback in order to update header after model update
+        // cahnge close callback in order to update header after model update
         modal.setWindowClosedCallback(new ModalWindow.WindowClosedCallback() {
 
             private static final long serialVersionUID = 8804221891699487139L;
@@ -211,7 +211,8 @@ public abstract class AnyDirectoryPanel<A extends AnyTO, E extends AbstractAnyRe
 
     @Override
     protected AnyDataProvider<A> dataProvider() {
-        return new AnyDataProvider<>(restClient, rows, filtered, realm, type, pageRef).setFIQL(this.fiql);
+        final AnyDataProvider<A> dp = new AnyDataProvider<>(restClient, rows, filtered, realm, type);
+        return dp.setFIQL(this.fiql);
     }
 
     public void search(final String fiql, final AjaxRequestTarget target) {

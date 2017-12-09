@@ -87,6 +87,21 @@ under the License.
         <plugins>
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-compiler-plugin</artifactId>
+            <inherited>true</inherited>
+            <executions>
+              <execution>
+                <id>build-for-wadl</id>
+                <phase>pre-site</phase>                
+                <goals>
+                  <goal>compile</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+                  
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-javadoc-plugin</artifactId>
             <inherited>true</inherited>
             <executions>
@@ -123,7 +138,7 @@ under the License.
                 </goals>
                 <configuration>
                   <applicationTitle>Apache Syncope ${project.version}</applicationTitle>
-                  <namespacePrefix>syncope21</namespacePrefix>
+                  <namespacePrefix>syncope2</namespacePrefix>
                   <incrementNamespacePrefix>false</incrementNamespacePrefix>
                   <linkAnyMediaTypeToXmlSchema>true</linkAnyMediaTypeToXmlSchema>
                   <useJaxbContextForQnames>true</useJaxbContextForQnames>
